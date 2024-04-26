@@ -193,9 +193,11 @@ public class PhpDataTransferClientCodegen extends AbstractPhpCodegen {
     }
 
     @Override
-    protected String getContentType(RequestBody requestBody) {
+    protected ArrayList<String> getContentType(RequestBody requestBody) {
         //Awfully nasty workaround to skip formParams generation
-        return null;
+        ArrayList<String> nilArray = new ArrayList<>();
+        nilArray.add(null);
+        return nilArray;
     }
 
     @Override
