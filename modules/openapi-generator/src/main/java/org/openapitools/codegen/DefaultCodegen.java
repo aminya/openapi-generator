@@ -4686,49 +4686,55 @@ public class DefaultCodegen implements CodegenConfig {
         CodegenParameter bodyParam = null;
         RequestBody requestBody = ModelUtils.getReferencedRequestBody(this.openAPI, operation.getRequestBody());
         if (requestBody != null) {
-            String contentType = getContentType(requestBody);
-            if (contentType != null) {
-                contentType = contentType.toLowerCase(Locale.ROOT);
-            }
-            if (contentType != null &&
-                    ((!(this instanceof RustAxumServerCodegen) && contentType.startsWith("application/x-www-form-urlencoded")) ||
-                            contentType.startsWith("multipart"))) {
-                // process form parameters
-                formParams = fromRequestBodyToFormParameters(requestBody, imports);
-                op.isMultipart = contentType.startsWith("multipart");
-                for (CodegenParameter cp : formParams) {
-                    setParameterEncodingValues(cp, requestBody.getContent().get(contentType));
-                    postProcessParameter(cp);
+            ArrayList<String> contentTypes = getContentType(requestBody);
+            // Process each content type in the request body
+            for (String contentType : contentTypes) {
+                if (contentType != null) {
+                    contentType = contentType.toLowerCase(Locale.ROOT);
                 }
-                // add form parameters to the beginning of all parameter list
-                if (prependFormOrBodyParameters) {
+                if (contentType != null &&
+                        ((!(this instanceof RustAxumServerCodegen)
+                                && contentType.startsWith("application/x-www-form-urlencoded")) ||
+                                contentType.startsWith("multipart"))) {
+                    // process form parameters
+                    formParams = fromRequestBodyToFormParameters(requestBody, imports);
+                    op.isMultipart = contentType.startsWith("multipart");
                     for (CodegenParameter cp : formParams) {
-                        allParams.add(cp.copy());
+                        setParameterEncodingValues(cp, requestBody.getContent().get(contentType));
+                        postProcessParameter(cp);
                     }
-                }
-            } else {
-                // process body parameter
-                String bodyParameterName = "";
-                if (op.vendorExtensions != null && op.vendorExtensions.containsKey("x-codegen-request-body-name")) {
-                    bodyParameterName = (String) op.vendorExtensions.get("x-codegen-request-body-name");
-                }
-                if (requestBody.getExtensions() != null && requestBody.getExtensions().containsKey("x-codegen-request-body-name")) {
-                    bodyParameterName = (String) requestBody.getExtensions().get("x-codegen-request-body-name");
-                }
-
-                bodyParam = fromRequestBody(requestBody, imports, bodyParameterName);
-
-                if (bodyParam != null) {
-                    bodyParam.description = escapeText(requestBody.getDescription());
-                    postProcessParameter(bodyParam);
-                    bodyParams.add(bodyParam);
+                    // add form parameters to the beginning of all parameter list
                     if (prependFormOrBodyParameters) {
-                        allParams.add(bodyParam);
+                        for (CodegenParameter cp : formParams) {
+                            allParams.add(cp.copy());
+                        }
+                    }
+                } else {
+                    // process body parameter
+                    String bodyParameterName = "";
+                    if (op.vendorExtensions != null && op.vendorExtensions.containsKey("x-codegen-request-body-name")) {
+                        bodyParameterName = (String) op.vendorExtensions.get("x-codegen-request-body-name");
+                    }
+                    if (requestBody.getExtensions() != null
+                            && requestBody.getExtensions().containsKey("x-codegen-request-body-name")) {
+                        bodyParameterName = (String) requestBody.getExtensions().get("x-codegen-request-body-name");
                     }
 
-                    // add example
-                    if (schemas != null && !isSkipOperationExample()) {
-                        op.requestBodyExamples = new ExampleGenerator(schemas, this.openAPI).generate(null, new ArrayList<>(getConsumesInfo(this.openAPI, operation)), bodyParam.baseType);
+                    bodyParam = fromRequestBody(requestBody, imports, bodyParameterName);
+
+                    if (bodyParam != null) {
+                        bodyParam.description = escapeText(requestBody.getDescription());
+                        postProcessParameter(bodyParam);
+                        bodyParams.add(bodyParam);
+                        if (prependFormOrBodyParameters) {
+                            allParams.add(bodyParam);
+                        }
+
+                        // add example
+                        if (schemas != null && !isSkipOperationExample()) {
+                            op.requestBodyExamples = new ExampleGenerator(schemas, this.openAPI).generate(null,
+                                    new ArrayList<>(getConsumesInfo(this.openAPI, operation)), bodyParam.baseType);
+                        }
                     }
                 }
             }
@@ -6997,12 +7003,12 @@ public class DefaultCodegen implements CodegenConfig {
         additionalProperties.put(propertyKey, value);
     }
 
-    protected String getContentType(RequestBody requestBody) {
+    protected ArrayList<String> getContentType(RequestBody requestBody) {
         if (requestBody == null || requestBody.getContent() == null || requestBody.getContent().isEmpty()) {
             LOGGER.debug("Cannot determine the content type. Returning null.");
             return null;
         }
-        return new ArrayList<>(requestBody.getContent().keySet()).get(0);
+        return new ArrayList<>(requestBody.getContent().keySet());
     }
 
     private void setOauth2Info(CodegenSecurity codegenSecurity, OAuthFlow flow) {
