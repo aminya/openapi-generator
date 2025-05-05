@@ -23,7 +23,7 @@
 #include "CppRestPetstoreClient/ApiException.h"
 #include "CppRestPetstoreClient/IHttpBody.h"
 #include "CppRestPetstoreClient/HttpContent.h"
-
+#include "CppRestPetstoreClient/ModelBase.h"
 #if  defined (_WIN32) || defined (_WIN64)
 #undef U
 #endif
@@ -32,6 +32,7 @@
 #include <cpprest/http_client.h>
 
 #include <memory>
+#include <map>
 #include <vector>
 #include <functional>
 
@@ -63,8 +64,11 @@ public:
     static utility::string_t parameterToString(double value);
     static utility::string_t parameterToString(const utility::datetime &value);
     static utility::string_t parameterToString(bool value);
+    static utility::string_t parameterToString(const ModelBase& value);
     template<class T>
     static utility::string_t parameterToString(const std::vector<T>& value);
+    template<class T, class U>
+    static utility::string_t parameterToString(const std::map<T, U>& value);
     template<class T>
     static utility::string_t parameterToString(const std::shared_ptr<T>& value);
 
@@ -96,6 +100,19 @@ utility::string_t ApiClient::parameterToString(const std::vector<T>& value)
         ss << ApiClient::parameterToString(value[i]);
     }
 
+    return ss.str();
+}
+
+template<class T, class U>
+utility::string_t ApiClient::parameterToString(const std::map<T, U>& value)
+{
+    utility::stringstream_t ss;
+    ss << "{";
+    for(const auto& pair : value)
+    {
+        ss << ApiClient::parameterToString(pair.first) << ": " << ApiClient::parameterToString(pair.second) << ", ";
+    }
+    ss << "}";
     return ss.str();
 }
 
