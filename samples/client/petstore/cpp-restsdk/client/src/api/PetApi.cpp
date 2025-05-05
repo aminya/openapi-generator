@@ -1015,11 +1015,11 @@ pplx::task<void> PetApi::updatePetWithForm(int64_t petId, boost::optional<utilit
 
     if (name)
     {
-        localVarFormParams[ utility::conversions::to_string_t("name") ] = ApiClient::parameterToString(*name);
+        localVarFormParams[utility::conversions::to_string_t("name")] = ApiClient::parameterToString(*name);
     }
     if (status)
     {
-        localVarFormParams[ utility::conversions::to_string_t("status") ] = ApiClient::parameterToString(*status);
+        localVarFormParams[utility::conversions::to_string_t("status")] = ApiClient::parameterToString(*status);
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
@@ -1131,11 +1131,11 @@ pplx::task<std::shared_ptr<ApiResponse>> PetApi::uploadFile(int64_t petId, boost
 
     if (additionalMetadata)
     {
-        localVarFormParams[ utility::conversions::to_string_t("additionalMetadata") ] = ApiClient::parameterToString(*additionalMetadata);
+        localVarFormParams[utility::conversions::to_string_t("additionalMetadata")] = ApiClient::parameterToString(*additionalMetadata);
     }
     if (file && *file != nullptr)
     {
-        localVarFileParams[ utility::conversions::to_string_t("file") ] = *file;
+        localVarFileParams[utility::conversions::to_string_t("file")] = *file;
     }
 
     std::shared_ptr<IHttpBody> localVarHttpBody;
