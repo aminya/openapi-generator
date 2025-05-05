@@ -132,17 +132,55 @@ pplx::task<{{{returnType}}}{{^returnType}}void{{/returnType}}> {{classname}}::{{
     {{/required}}
     {
         {{#isQueryParam}}
+        {{#isDeepObject}}
+        {{#isArray}}
+        for (int i_key = 0; i_key < {{^required}}(*{{/required}}{{paramName}}{{^required}}){{/required}}->size(); i_key++) {
+            localVarQueryParams[utility::conversions::to_string_t("{{baseName}}[" + std::to_string(i_key) + "]")] = ApiClient::parameterToString({{^required}}(*{{/required}}{{paramName}}{{^required}}){{/required}}[i_key]);
+        }
+        {{/isArray}}
+        {{^isArray}}
+        {{#isModel}}
+        for (const auto& pair : {{^required}}(*{{/required}}{{paramName}}{{^required}}){{/required}}->toJson().as_object()) {
+            localVarQueryParams[utility::conversions::to_string_t("{{baseName}}[" + pair.first + "]")] = ApiClient::parameterToString(pair.second.serialize());
+        }
+        {{/isModel}}
+        {{^isModel}}
         localVarQueryParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
+        {{/isModel}}
+        {{/isArray}}
+        {{/isDeepObject}}
+        {{^isDeepObject}}
+        {{#isExplode}}
+        {{#isArray}}
+        for (const auto& item : {{^required}}(*{{/required}}{{paramName}}{{^required}}){{/required}}) {
+            localVarQueryParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString(item);
+        }
+        {{/isArray}}
+        {{^isArray}}
+        {{#isModel}}
+        for (const auto& pair : {{^required}}(*{{/required}}{{paramName}}{{^required}}){{/required}}->toJson().as_object()) {
+            localVarQueryParams[utility::conversions::to_string_t(pair.first)] = ApiClient::parameterToString(pair.second.serialize());
+        }
+        {{/isModel}}
+        {{^isModel}}
+        localVarQueryParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
+        {{/isModel}}
+        {{/isArray}}
+        {{/isExplode}}
+        {{^isExplode}}
+        localVarQueryParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
+        {{/isExplode}}
+        {{/isDeepObject}}
         {{/isQueryParam}}
         {{#isHeaderParam}}
         localVarHeaderParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
         {{/isHeaderParam}}
         {{#isFormParam}}
         {{#isFile}}
-        localVarFileParams[ utility::conversions::to_string_t("{{baseName}}") ] = {{^required}}*{{/required}}{{paramName}};
+        localVarFileParams[utility::conversions::to_string_t("{{baseName}}")] = {{^required}}*{{/required}}{{paramName}};
         {{/isFile}}
         {{^isFile}}
-        localVarFormParams[ utility::conversions::to_string_t("{{baseName}}") ] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
+        localVarFormParams[utility::conversions::to_string_t("{{baseName}}")] = ApiClient::parameterToString({{^required}}*{{/required}}{{paramName}});
         {{/isFile}}
         {{/isFormParam}}
     }
