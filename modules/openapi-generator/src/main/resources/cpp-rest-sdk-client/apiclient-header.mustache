@@ -87,10 +87,15 @@ utility::string_t ApiClient::parameterToString(const std::vector<T>& value)
 {
     utility::stringstream_t ss;
 
-    for( size_t i = 0; i < value.size(); i++)
+    bool isFirst = true;
+    for(const auto& item : value)
     {
-        if( i > 0) ss << utility::conversions::to_string_t(", ");
-        ss << ApiClient::parameterToString(value[i]);
+        if (!isFirst) {
+            ss << utility::conversions::to_string_t(", ");
+        } else {
+            isFirst = false;
+        }
+        ss << ApiClient::parameterToString(item);
     }
 
     return ss.str();
@@ -101,9 +106,15 @@ utility::string_t ApiClient::parameterToString(const std::map<T, U>& value)
 {
     utility::stringstream_t ss;
     ss << "{";
+    bool isFirst = true;
     for(const auto& pair : value)
     {
-        ss << ApiClient::parameterToString(pair.first) << ": " << ApiClient::parameterToString(pair.second) << ", ";
+        if (!isFirst) {
+            ss << ", ";
+        } else {
+            isFirst = false;
+        }
+        ss << ApiClient::parameterToString(pair.first) << ": " << ApiClient::parameterToString(pair.second);
     }
     ss << "}";
     return ss.str();
