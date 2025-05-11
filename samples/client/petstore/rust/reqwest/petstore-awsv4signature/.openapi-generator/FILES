@@ -16,9 +16,11 @@ docs/NullableArray.md
 docs/NumericEnumTesting.md
 docs/OptionalTesting.md
 docs/Order.md
+docs/Page.md
 docs/Person.md
 docs/Pet.md
 docs/PetApi.md
+docs/PetsExplodePostPageExplodeParameter.md
 docs/PropertyTest.md
 docs/Ref.md
 docs/Return.md
@@ -42,6 +44,7 @@ src/apis/store_api.rs
 src/apis/testing_api.rs
 src/apis/user_api.rs
 src/lib.rs
+src/models/_pets_explode_post_page_explode_parameter.rs
 src/models/_tests_discriminator_duplicate_enums_get_200_response.rs
 src/models/action_container.rs
 src/models/any_type_test.rs
@@ -59,6 +62,7 @@ src/models/nullable_array.rs
 src/models/numeric_enum_testing.rs
 src/models/optional_testing.rs
 src/models/order.rs
+src/models/page.rs
 src/models/person.rs
 src/models/pet.rs
 src/models/property_test.rs
