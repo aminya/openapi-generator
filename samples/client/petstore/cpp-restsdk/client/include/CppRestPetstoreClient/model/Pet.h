@@ -25,6 +25,7 @@
 #include "CppRestPetstoreClient/model/Tag.h"
 #include "CppRestPetstoreClient/model/Category.h"
 #include <cpprest/details/basic_types.h>
+#include "CppRestPetstoreClient/Object.h"
 #include <vector>
 
 namespace org {
@@ -108,6 +109,11 @@ public:
     void unsetStatus();
     void setStatus(const StatusEnum value);
 
+    std::shared_ptr<Object> getMetadata() const;
+    bool metadataIsSet() const;
+    void unsetMetadata();
+    void setMetadata(const std::shared_ptr<Object>& value);
+
 
 protected:
     int64_t m_Id;
@@ -127,6 +133,9 @@ protected:
 
     StatusEnum m_Status;
     bool m_StatusIsSet;
+
+    std::shared_ptr<Object> m_Metadata;
+    bool m_MetadataIsSet;
 
 };
 
